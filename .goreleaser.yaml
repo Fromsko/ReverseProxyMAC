@@ -1,6 +1,10 @@
 # .goreleaser.yaml
+version: 2
+name: ReverseProxyMAC
+
 builds:
-  - env:
+  - id: "reverse-proxy"
+    env:
       - CGO_ENABLED=0
     goos:
       - linux
@@ -9,10 +13,22 @@ builds:
     goarch:
       - amd64
       - arm64
+    main: ./main.go
+    ldflags:
+      - -s -w
+      - -X main.version={{.Version}}
+      - -X main.commit={{.Commit}}
+      - -X main.date={{.Date}}
 
 archives:
-  - format: zip
+  - format: binary
     name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    replacements:
+      darwin: macOS
+      linux: Linux
+      windows: Windows
+      amd64: x86_64
+      arm64: ARM64
 
 checksum:
   name_template: 'checksums.txt'
@@ -21,3 +37,4 @@ release:
   github:
     owner: Fromsko
     name: ReverseProxyMAC
+  prerelease: auto
