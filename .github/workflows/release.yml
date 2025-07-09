@@ -32,6 +32,8 @@ jobs:
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v6.3.0
         with:
-          args: release --clean
+          args: |
+            release --clean
+            ${{ contains(github.ref, 'refs/tags/') && '' || '--snapshot' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
