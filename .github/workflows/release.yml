@@ -23,10 +23,19 @@ jobs:
         with:
           go-version: '1.21'
 
+      - name: Clean repository
+        run: git restore . || true  # 强制撤销未提交更改
+
       - name: Install dependencies
         run: |
           go mod tidy
           go mod download
+
+      - name: Fix dependencies
+        run: |
+          go mod tidy       # 同步依赖
+          git add go.mod    # 标记变更
+          git commit -m "CI: Update go.mod" || true  # 提交或忽略
 
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v6
